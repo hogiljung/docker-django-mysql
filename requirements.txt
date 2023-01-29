@@ -1,0 +1,6 @@
+Django>=4.1.2
+djangorestframework>=3.14.0
+django-searchable-encrypted-fields>=0.2.1
+django-cors-headers>=0.2.1
+PyMySQL>=1.0.2
+cryptography>=39.0.0
