@@ -10,7 +10,7 @@ services:
       - "3306:3306"    
     volumes:
       - ./db/initdb.d:/docker-entrypoint-initdb.d
-      - ./db/data:/var/lib/mysql
+      - db_volumes:/var/lib/mysql
     env_file: .db.env
     environment:
       - TZ=Asia/Seoul
@@ -37,6 +37,8 @@ services:
         condition: service_healthy
     networks:
       - db_network
+volumes:
+  db_volumes:
 networks:
   db_network:
     driver: bridge

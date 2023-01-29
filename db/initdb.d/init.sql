@@ -1,9 +1,13 @@
 USE mysql;
 
-CREATE USER 'django'@'%' IDENTIFIED BY '1234';
+ALTER USER 'root'@'localhost' IDENTIFIED WITH caching_sha2_password by '4321';
+
+DROP USER 'django'@'%';
+CREATE USER 'django'@'%' IDENTIFIED WITH caching_sha2_password BY '1234';
 GRANT ALL PRIVILEGES ON *.* TO 'django'@'%';
 FLUSH PRIVILEGES;
 
+DROP DATABASE board;
 CREATE DATABASE board;
 USE board;
 
