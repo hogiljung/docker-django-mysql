@@ -63,7 +63,8 @@ class PostView(viewsets.ModelViewSet):
         post_id = request.POST.get('post_id')
         user_id = request.POST.get('user_id')
         post = Post.objects.filter(id=post_id).first()
-        if (user_id == post.user_id.id or user_id == "1"):
+        user = Users.objects.filter(id=user_id).first()
+        if (user_id == post.user_id.id or user.username == "suhun"):
             post.delete()
             data = dict(
                 #msg='글 삭제 완료',
@@ -82,7 +83,8 @@ class PostView(viewsets.ModelViewSet):
         post_id = request.POST.get('post_id')
         user_id = request.POST.get('user_id')
         post = Post.objects.filter(id=post_id).first()
-        if (user_id == post.user_id.id or user_id == "1"):
+        user = Users.objects.filter(id=user_id).first()
+        if (user_id == post.user_id.id or user.username == "suhun"):
             postdata = Post.objects.get(id=post_id)
             contentdata = Content.objects.get(post_id=post_id)
             title = request.POST.get('title', None)
@@ -113,7 +115,9 @@ class PostView(viewsets.ModelViewSet):
         post_id = request.POST.get('post_id')
         user_id = request.POST.get('user_id')
         post = Post.objects.filter(id=post_id).first()
-        if (user_id == post.user_id.id or user_id == "1"):
+        user = Users.objects.filter(id=user_id).first()
+
+        if (user_id == post.user_id.id or user.username == "suhun"):
             data = dict(
                 msg='작가 일치',
                 code='000'
