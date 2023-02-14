@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'test',
     'sign',
     'board',
+    'sslserver',
 ]
 
 MIDDLEWARE = [

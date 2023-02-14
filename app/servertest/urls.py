@@ -25,7 +25,7 @@ import board.views
 router = routers.DefaultRouter()
 #router.register(r'users', login.views.UserView, basename='users')
 #router.register(r'signup', signup.views.signup, basename='signup')
-router.register(r'users', sign.views.SignView, basename='users')
+router.register(r'userssss', sign.views.SignView, basename='users')
 router.register(r'posts', board.views.PostView, basename='postlist')
 urlpatterns = [
     re_path(r'^',include(router.urls)),

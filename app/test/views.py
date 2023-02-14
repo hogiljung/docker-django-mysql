@@ -70,12 +70,14 @@ class TestView(APIView):
                 logger.error(id)
                 logger.error(pw)
                 Users.objects.create(uuid=uuid, id=id, pw=pw_crypted)
-                data = dict(
+                user = dict(
                     uuid=uuid,
                     id=id,
-                    pw=pw_crypted,
+                    pw=pw_crypted,)
+                data = dict(
+                    user = user,
                     msg='회원가입 성공',
-                    code='000'
+                    code='0000'
                 )
                 return Response(data=data)
 

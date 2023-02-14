@@ -14,11 +14,11 @@ class ContentsSerializer(serializers.ModelSerializer):
         read_only_fields = ()
 
 class PostSerializer(serializers.ModelSerializer):
-    post = ContentsSerializer(many=True, read_only=True)
+    #post = ContentsSerializer(many=True, read_only=True)
     user = UserSerializer(many=True, read_only=True)
     class Meta:
         model = Post
-        fields = ('id', 'title', 'brief_description', 'created_date', 'updated_date', 'user_id', 'post', 'user')
+        fields = ('id', 'title', 'brief_description', 'created_date', 'updated_date', 'user')
         read_only_fields = ()
 
     def to_representation(self, instance):

@@ -3,6 +3,7 @@ import logging
 from django.contrib.auth.hashers import check_password, make_password
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework import status
 
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
@@ -27,21 +28,25 @@ class SignView(viewsets.ModelViewSet):
         user = Users.objects.filter(username=username).first()
         if user is None:
             data = dict(
-                msg='id 불일치',
+                #msg='id 불일치',
                 code='001'
             )
             return Response(data)
         else:
             if check_password(password, user.password):
+                user = dict(
+                    id=str(user.id)
+                )
                 data = dict(
-                    msg='로그인 성공',
+                    #msg='로그인 성공',
+                    user=user,
                     code='000',
-                    uid=str(user.id)
+
                 )
                 return Response(data=data)
             else:
                 data = dict(
-                    msg='패스워드 불일치',
+                    #msg='패스워드 불일치',
                     code='002'
                 )
                 return Response(data=data)
@@ -58,20 +63,15 @@ class SignView(viewsets.ModelViewSet):
 
             if Users.objects.filter(username=username).exists():
                 data = dict(
-                    msg='이미 존재하는 아이디 입니다.',
+                    #msg='이미 존재하는 아이디 입니다.',
                     code='001'
                 )
                 return Response(data=data)
             else:
 
-
                 Users.objects.create(id=id, username=username, password=pw_crypted)
                 data = dict(
-                    id=id,
-                    username=username,
-                    password=pw_crypted,
-                    msg='회원가입 성공, '+str(id),
+                    #msg='회원가입 성공,',
                     code='000',
-
                 )
                 return Response(data=data)

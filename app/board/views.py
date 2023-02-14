@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
+from rest_framework import status
 
 from sign.models import Users
 from board.models import Post, Content
@@ -19,14 +20,28 @@ class PostView(viewsets.ModelViewSet):
 
     @csrf_exempt
     @api_view(('GET',))
-    def briefContentView(request):
+    def briefContentView(request):      #/titleview/
         post = Post.objects.all()
         serializer = PostSerializer(post, many=True)
         return JsonResponse(serializer.data, safe=False)
 
     @csrf_exempt
     @api_view(('POST',))
-    def postContentView(request):
+    def contentView(request):  # /contentview/
+        post_id = request.POST.get('post_id')
+        content = Content.objects.filter(post_id=post_id).first()
+        print(content.content)
+        c = dict(
+            content=content.content
+        )
+        data = dict(
+            content=c,
+            code='000'
+        )
+        return Response(data=data)
+    @csrf_exempt
+    @api_view(('POST',))
+    def postContentView(request):   #/post/
         title = request.POST.get('title', None)
         content = request.POST.get('content', None)
         user = request.POST.get('user_id')
@@ -37,46 +52,33 @@ class PostView(viewsets.ModelViewSet):
         post = Post.objects.create(title=title, brief_description=brief_description, user_id=Users.objects.filter(id=user).first())
         Content.objects.create(post_id=Post.objects.filter(id=post.id).first(), content=content,)
         data = dict(
-            msg='글작성 성공',
+            #msg='글작성 성공',
             code='000'
         )
         return Response(data=data)
 
     @csrf_exempt
     @api_view(('POST',))
-    def contentView(request):
-        post_id = request.POST.get('post_id')
-        content = Content.objects.filter(post_id=post_id).first()
-        print(content.content)
-        data = dict(
-            content=content.content,
-            code='000'
-        )
-        return Response(data=data)
-
-
-    @csrf_exempt
-    @api_view(('POST',))
-    def deleteContentView(request):
+    def deleteContentView(request):     #/delete/
         post_id = request.POST.get('post_id')
         user_id = request.POST.get('user_id')
         post = Post.objects.filter(id=post_id).first()
         if (user_id == post.user_id.id):
             post.delete()
             data = dict(
-                msg='글 삭제 완료',
+                #msg='글 삭제 완료',
                 code='000'
             )
         else:
             data = dict(
-                msg='작가 불일치',
+                #msg='작가 불일치',
                 code='001'
             )
         return Response(data=data)
 
     @csrf_exempt
     @api_view(('POST',))
-    def modifyContentView(request):
+    def modifyContentView(request):     #/modify/
         post_id = request.POST.get('post_id')
         user_id = request.POST.get('user_id')
         post = Post.objects.filter(id=post_id).first()
@@ -95,25 +97,25 @@ class PostView(viewsets.ModelViewSet):
             contentdata.save()
             postdata.save()
             data = dict(
-                msg='글 수정 완료',
+                #msg='글 수정 완료',
                 code='000'
             )
         else:
             data = dict(
-                msg='작가 불일치',
+                #msg='작가 불일치',
                 code='001'
             )
         return Response(data=data)
 
     @csrf_exempt
     @api_view(('POST',))
-    def checkAuthorView(request):
+    def checkAuthorView(request):   #/checkauthorview/
         post_id = request.POST.get('post_id')
         user_id = request.POST.get('user_id')
         post = Post.objects.filter(id=post_id).first()
         if (user_id == post.user_id.id):
             data = dict(
-                msg='글 수정 완료',
+                msg='작가 일치',
                 code='000'
             )
         else:

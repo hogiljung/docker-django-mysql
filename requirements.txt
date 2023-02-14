@@ -4,3 +4,4 @@ django-searchable-encrypted-fields>=0.2.1
 django-cors-headers>=0.2.1
 PyMySQL>=1.0.2
 cryptography>=39.0.0
+django-sslserver>=0.22
