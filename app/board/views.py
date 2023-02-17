@@ -28,6 +28,7 @@ class PostView(viewsets.ModelViewSet):
     @csrf_exempt
     @api_view(('POST',))
     def contentView(request):  # /contentview/
+        print(request.POST)
         post_id = request.POST.get('post_id')
         content = Content.objects.filter(post_id=post_id).first()
         print(content.content)

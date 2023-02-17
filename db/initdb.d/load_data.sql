@@ -1,6 +1,6 @@
 USE board;
 
-INSERT INTO user(id, username, password) VALUES ("3f06af63-a93c-11e4-9797-00505690773f", "hogil", "1234");
+INSERT INTO user(id, username, password) VALUES ("3f06af63-a93c-11e4-9797-00505690773f", "hogil", "pbkdf2_sha256$390000$wK61QeV4TGCMqXRNuAlu7b$CVX+YpfYsHpWJlDsOH9pWly8/jFRQSEJ0Ud0VkGNlIA=");
 
 INSERT INTO post(title, brief_description, user_id) VALUES("hi", "Great view!", "3f06af63-a93c-11e4-9797-00505690773f");
 
