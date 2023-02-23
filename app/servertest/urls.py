@@ -27,6 +27,7 @@ router = routers.DefaultRouter()
 #router.register(r'signup', signup.views.signup, basename='signup')
 router.register(r'userssss', sign.views.SignView, basename='users')
 router.register(r'posts', board.views.PostView, basename='postlist')
+router.register(r'comments', board.views.CommentsView, basename='commentlist')
 urlpatterns = [
     re_path(r'^',include(router.urls)),
     re_path(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
@@ -38,5 +39,7 @@ urlpatterns = [
     path('titleview/',board.views.PostView.briefContentView),
     path('contentview/',board.views.PostView.contentView),
     path('checkauthorview/',board.views.PostView.checkAuthorView),
+    path('commentview/',board.views.PostView.commentView),
+    path('writecommentview/',board.views.PostView.writeCommentView),
     #path('tests/', test.views.TestView.login),
 ]

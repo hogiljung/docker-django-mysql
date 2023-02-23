@@ -9,10 +9,11 @@ class Post(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
     user_id = models.ForeignKey(Users, on_delete=models.CASCADE, db_column='user_id', related_name='user')
+    deleted = models.SmallIntegerField()
+    comment_count = models.IntegerField()
     class Meta:
         managed = False #테이블 자동생성 막기
         db_table = 'post'
-
 
 class Content(models.Model):
     post_id = models.ForeignKey(Post, related_name='post', on_delete=models.CASCADE, primary_key=True, db_column='post_id', unique=True)
@@ -21,3 +22,14 @@ class Content(models.Model):
     class Meta:
         managed = False #테이블 자동생성 막기
         db_table = 'post_content'
+
+class Comment(models.Model):
+    id = models.AutoField(primary_key=True)
+    post_id = models.ForeignKey(Post, related_name='post_comment', on_delete=models.CASCADE, db_column='post_id', unique=True)
+    user_id = models.ForeignKey(Users, on_delete=models.CASCADE, db_column='user_id', related_name='user_comment')
+    content = models.CharField(max_length=100)
+    created_date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True)
+    class Meta:
+        managed = False #테이블 자동생성 막기
+        db_table = 'comment'

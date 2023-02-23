@@ -27,8 +27,9 @@ CREATE TABLE post
     brief_description   VARCHAR(255),           
     created_date        DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_date        DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,       
-    user_id             CHAR(36)       NOT NULL,
     deleted             TINYINT(4)     NOT NULL DEFAULT 0,
+    comment_count       INT            NOT NULL DEFAULT 0,
+    user_id             CHAR(36)       NOT NULL,
     INDEX idx_user_id(user_id),
     FOREIGN KEY(user_id) REFERENCES user(id),
     PRIMARY KEY(id)

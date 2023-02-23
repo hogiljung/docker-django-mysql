@@ -1,15 +1,16 @@
 import logging
 
+import json
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework import viewsets
+from rest_framework import viewsets, serializers
 from rest_framework.decorators import api_view
 from rest_framework import status
 
 from sign.models import Users
-from board.models import Post, Content
-from board.serializers import PostSerializer, UserSerializer
+from board.models import Post, Content, Comment
+from board.serializers import PostSerializer, CommentSerializer, UserSerializer, TitleSerializer
 from rest_framework.response import Response
 
 
@@ -18,25 +19,40 @@ class PostView(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
+    # @csrf_exempt
+    # @api_view(('GET',))
+    # def briefContentView(request):      #/titleview/
+    #     post = Post.objects.all()
+    #     serializer = PostSerializer(post, many=True)
+    #     return JsonResponse(serializer.data, safe=False)
+
     @csrf_exempt
     @api_view(('GET',))
-    def briefContentView(request):      #/titleview/
-        post = Post.objects.all()
-        serializer = PostSerializer(post, many=True)
-        return JsonResponse(serializer.data, safe=False)
+    def briefContentView(request):  # /titleview/
+        post = Post.objects.exclude(deleted=1).all()
+        serializer = TitleSerializer(post, many=True)
+        data = dict(
+            content=serializer.data,
+            code='000'
+        )
+        # logger = logging.getLogger('test')
+        # logger.error(data)
+        return JsonResponse(data, safe=False)
 
     @csrf_exempt
     @api_view(('POST',))
     def contentView(request):  # /contentview/
         print(request.POST)
         post_id = request.POST.get('post_id')
+        post = Post.objects.filter(id=post_id).first()
         content = Content.objects.filter(post_id=post_id).first()
         print(content.content)
-        c = dict(
-            content=content.content
+        d = dict(
+            title=post.title,
+            content=content.content,
         )
         data = dict(
-            content=c,
+            content=d,
             code='000'
         )
         return Response(data=data)
@@ -50,7 +66,7 @@ class PostView(viewsets.ModelViewSet):
             brief_description = str(content)[0:7] + "..."
         else:
             brief_description = content
-        post = Post.objects.create(title=title, brief_description=brief_description, user_id=Users.objects.filter(id=user).first())
+        post = Post.objects.create(title=title, brief_description=brief_description, user_id=Users.objects.filter(id=user).first(), deleted=0, comment_count=0)
         Content.objects.create(post_id=Post.objects.filter(id=post.id).first(), content=content,)
         data = dict(
             #msg='글작성 성공',
@@ -65,8 +81,10 @@ class PostView(viewsets.ModelViewSet):
         user_id = request.POST.get('user_id')
         post = Post.objects.filter(id=post_id).first()
         user = Users.objects.filter(id=user_id).first()
+        postdata = Post.objects.get(id=post_id)
         if (user_id == post.user_id.id or user.username == "suhun"):
-            post.delete()
+            postdata.deleted = 1
+            postdata.save()
             data = dict(
                 #msg='글 삭제 완료',
                 code='000'
@@ -99,8 +117,13 @@ class PostView(viewsets.ModelViewSet):
             contentdata.content = content
             contentdata.save()
             postdata.save()
+            a = dict(
+                title=title,
+                content=content,
+                updated_date=postdata.updated_date,
+            )
             data = dict(
-                #msg='글 수정 완료',
+                content=a,
                 code='000'
             )
         else:
@@ -117,7 +140,6 @@ class PostView(viewsets.ModelViewSet):
         user_id = request.POST.get('user_id')
         post = Post.objects.filter(id=post_id).first()
         user = Users.objects.filter(id=user_id).first()
-
         if (user_id == post.user_id.id or user.username == "suhun"):
             data = dict(
                 msg='작가 일치',
@@ -130,6 +152,53 @@ class PostView(viewsets.ModelViewSet):
             )
         return Response(data=data)
 
+    @csrf_exempt
+    @api_view(('POST',))
+    def commentView(request):
+        post_id = request.POST.get('post_id')
+        comment = Comment.objects.filter(post_id=post_id).all()
+        comment_serializer = CommentSerializer(comment, many=True)
+        data = dict(
+            comments=comment_serializer.data,
+            code='000',
+        )
+        # logger = logging.getLogger('test')
+        # logger.error(data)
+        return Response(data=data)
+
+    @csrf_exempt
+    @api_view(('POST',))
+    def writeCommentView(request):  # /writecommentview/
+        post_id = request.POST.get('post_id')
+        content = request.POST.get('content', None)
+        user = request.POST.get('user_id')
+        comment = Comment.objects.create(content=content, post_id=Post.objects.filter(id=post_id).first(),
+                                   user_id=Users.objects.filter(id=user).first())
+        u = Users.objects.filter(id=user).first()
+        count = Comment.objects.filter(post_id=post_id).all()
+        post = Post.objects.filter(id=post_id).first()
+        post.comment_count=count.count()
+        post.save()
+        b = dict(
+            id=u.id,
+            username=u.username,
+        )
+        a = dict(
+            content=comment.content,
+            updated_date=comment.updated_date,
+            user=b,
+        )
+        data = dict(
+            comment=a,
+            code='000',
+        )
+
+        return Response(data=data)
+
 class ContentsView(viewsets.ModelViewSet):
     queryset = Content.objects.all()
     serializer_class = PostSerializer
+
+class CommentsView(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
