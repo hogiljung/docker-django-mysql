@@ -46,7 +46,7 @@ CREATE TABLE post_content
 
 CREATE TABLE comment
 (
-    id              INT UNSIGNED NOT NULL,
+    id              INT UNSIGNED NOT NULL AUTO_INCREMENT,
     content         TEXT,
     created_date    DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_date    DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
