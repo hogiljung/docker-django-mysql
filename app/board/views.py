@@ -56,6 +56,7 @@ class PostView(viewsets.ModelViewSet):
             code='000'
         )
         return Response(data=data)
+
     @csrf_exempt
     @api_view(('POST',))
     def postContentView(request):   #/post/
